@@ -2,8 +2,10 @@ package com.craftaro.ultimatefishing.bait;
 
 import com.craftaro.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.craftaro.core.utils.TextUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,19 +28,44 @@ public class BaitManager {
     }
 
     public Bait getBait(ItemStack item) {
-        if (item == null) return null;
+        if (item == null || item.getType().isAir() || item.getAmount() <= 0) {
+            return null;
+        }
+        if (item.getType() == Material.ARMOR_STAND) {
+            return null;
+        }
+
         String name;
-        NBTItem nbtItem = new NBTItem(item);
-        if (nbtItem.hasKey("bait")) {
-            name = nbtItem.getString("bait");
-        } else {
-            if (!item.hasItemMeta() || !item.getItemMeta().hasLore() || item.getItemMeta().getLore().isEmpty())
-                return null;
-            name = TextUtils.convertFromInvisibleString(item.getType() == Material.FISHING_ROD
-                    ? item.getItemMeta().getLore().get(0)
-                    : item.getItemMeta().getDisplayName()).split(":")[0];
+
+        try {
+            NBTItem nbtItem = new NBTItem(item);
+            if (nbtItem.hasKey("bait")) {
+                name = nbtItem.getString("bait");
+            } else {
+                if (!item.hasItemMeta()) return null;
+
+                ItemMeta meta = item.getItemMeta();
+
+                if (item.getType() == Material.FISHING_ROD) {
+                    if (meta.hasLore() && !meta.getLore().isEmpty()) {
+                        name = TextUtils.convertFromInvisibleString(meta.getLore().get(0)).split(":")[0];
+                    } else {
+                        return null;
+                    }
+                } else {
+                    if (meta.hasDisplayName()) {
+                        name = TextUtils.convertFromInvisibleString(meta.getDisplayName()).split(":")[0];
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("Error processing bait item: " + e.getMessage());
+            return null;
         }
 
         return getBait(name);
     }
+
 }
