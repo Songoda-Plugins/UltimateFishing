@@ -2,7 +2,7 @@ name: UltimateFishing
 description: UltimateFishing
 version: maven-version-number
 main: com.songoda.ultimatefishing.UltimateFishing
-author: Craftaro
+author: Songoda
 api-version: 1.13
 softdepend:
   - Vault
