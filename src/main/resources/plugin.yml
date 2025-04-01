@@ -1,7 +1,7 @@
 name: UltimateFishing
 description: UltimateFishing
 version: maven-version-number
-main: com.craftaro.ultimatefishing.UltimateFishing
+main: com.songoda.ultimatefishing.UltimateFishing
 author: Craftaro
 api-version: 1.13
 softdepend:
